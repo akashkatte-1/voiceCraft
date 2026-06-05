@@ -188,32 +188,52 @@
 
     // ── Gender heuristics ──
     const FEMALE_NAMES = [
-        'zira','hazel','susan','catherine','samantha','victoria','karen','moira',
-        'tessa','fiona','alice','ellen','amanda','angela','bella','clara',
-        'diana','emma','grace','helen','irene','jane','kate','laura',
-        'maria','nancy','olivia','rachel','sarah','lisa','jennifer','elsa',
-        'heera','irina','haruka','helena','eva','sabina','hoda','tracy',
-        'linda','anna','natasha','paulina','joana','luciana','francisca',
-        'montserrat','daria','katja','amelie','chloe','nicky','ioana',
-        'sara','monica','paola','kathy','audrey','yelda','female'
+        'zira', 'hazel', 'susan', 'catherine', 'samantha', 'victoria', 'karen', 'moira',
+        'tessa', 'fiona', 'alice', 'ellen', 'amanda', 'angela', 'bella', 'clara',
+        'diana', 'emma', 'grace', 'helen', 'irene', 'jane', 'kate', 'laura',
+        'maria', 'nancy', 'olivia', 'rachel', 'sarah', 'lisa', 'jennifer', 'elsa',
+        'heera', 'irina', 'haruka', 'helena', 'eva', 'sabina', 'hoda', 'tracy',
+        'linda', 'anna', 'natasha', 'paulina', 'joana', 'luciana', 'francisca',
+        'montserrat', 'daria', 'katja', 'amelie', 'chloe', 'nicky', 'ioana',
+        'sara', 'monica', 'paola', 'kathy', 'audrey', 'yelda',
+        'aria', 'jenny', 'michelle', 'sonia', 'abigail', 'elizabeth', 'emily',
+        'maisie', 'harriet', 'siobhan', 'stephanie', 'zoe', 'rebecca', 'matilda',
+        'faye', 'kirsty', 'heather', 'kendra', 'kimberly', 'melina', 'allison',
+        'prerna', 'neerja', 'ananya', 'aarohi', 'madhur', 'kiara', 'kavya',
+        'tashvi', 'shruti', 'female'
     ];
+
     const MALE_NAMES = [
-        'david','mark','james','daniel','alex','george','fred','ravi',
-        'thomas','richard','charles','paul','aaron','albert','arthur','bruce',
-        'carlos','craig','diego','edward','frank','gordon','henry','ivan',
-        'jack','kevin','lee','michael','nathan','oliver','peter','robert',
-        'stephen','victor','william','jorge','pablo','luca','andrei',
-        'cosimo','filip','mehdi','lado','male'
+        'david', 'guy', 'ryan', 'christopher', 'eric', 'liam', 'connor', 'andrew',
+        'brian', 'steffan', 'george', 'mark', 'james', 'daniel', 'alex', 'fred',
+        'ravi', 'thomas', 'richard', 'charles', 'paul', 'aaron', 'albert', 'arthur',
+        'bruce', 'carlos', 'craig', 'diego', 'edward', 'frank', 'gordon', 'henry',
+        'ivan', 'jack', 'kevin', 'lee', 'michael', 'nathan', 'oliver', 'peter',
+        'robert', 'stephen', 'victor', 'william', 'jorge', 'pablo', 'luca', 'andrei',
+        'cosimo', 'filip', 'mehdi', 'lado', 'sam', 'mitch', 'luke', 'ian', 'logan',
+        'marcus', 'harry', 'charlie', 'calum', 'neil', 'hugh', 'sean', 'benjamin',
+        'joshua', 'cooper', 'ryder', 'steve', 'male'
     ];
 
     function guessGender(voice) {
         const lower = voice.name.toLowerCase();
-        for (const n of FEMALE_NAMES) {
-            if (lower.includes(n)) return 'female';
+        // Split on non-alphanumeric characters to get individual words
+        const words = lower.split(/[^a-z0-9]+/);
+
+        // 1. First check for exact word matches (highly accurate, avoids "evan" matching "eva")
+        for (const w of words) {
+            if (FEMALE_NAMES.includes(w)) return 'female';
+            if (MALE_NAMES.includes(w)) return 'male';
         }
-        for (const n of MALE_NAMES) {
-            if (lower.includes(n)) return 'male';
+
+        // 2. Fallback to substring matching if names are run together (e.g. "GoogleUKEnglishMale")
+        for (const f of FEMALE_NAMES) {
+            if (lower.includes(f)) return 'female';
         }
+        for (const m of MALE_NAMES) {
+            if (lower.includes(m)) return 'male';
+        }
+
         return 'unknown';
     }
 
